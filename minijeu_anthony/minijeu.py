@@ -1,10 +1,15 @@
 from RFIDreader import RFIDReader
+from cardVerifier import CardVerifier
+from screenLCD import ScreenLCD
+import time 
 
-isPlaying = True
+
+
 reader = RFIDReader()
+verifier = CardVerifier()
+lcd = ScreenLCD() 
 
-while isPlaying:
+def main():
+
     
-    dataFirstCard = reader.Read()
-    
-    dataSecondCard = reader.Read()
+main()

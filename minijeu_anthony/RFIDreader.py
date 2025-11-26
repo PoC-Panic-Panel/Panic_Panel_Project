@@ -1,4 +1,3 @@
-import time
 from pirc522 import RFID
 
 class RFIDReader:
@@ -8,6 +7,8 @@ class RFIDReader:
     
     def Read(self):
         self.rdr.wait_for_tag()
+        
+        (error, data) = self.rdr.request()
     
         (error, uid) = self.rdr.anticoll()
         if not error:
