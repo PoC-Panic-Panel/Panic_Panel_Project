@@ -1,10 +1,13 @@
+from cardVerifier import CardVerifier
 import time
+
 class Memory:
-    def __init__(self, reader, verifier, lcd):
+    def __init__(self, reader, lcd):
         self.reader = reader
-        self.verifier = verifier
+        self.verifier = CardVerifier()
         self.lcd = lcd
-        
+        self.nbOfPairPlayerFound = 0
+        self.nbOfPair = 4
         
     def __AskCard(self):
         CardIsGood = False
@@ -29,33 +32,31 @@ class Memory:
         else:
             if(self.verifier.IsAPair(uuidFirstCard, uuidSecondCard)):
                 self.lcd.Show("C'est une pair!")
-                nbOfPairPlayerFound = nbOfPairPlayerFound + 1
+                self.nbOfPairPlayerFound = self.nbOfPairPlayerFound + 1
             else:
                 self.lcd.Show("Nan nan nan!")
     
     def Play(self):
-        nbOfPair = 4
-        nbOfPairPlayerFound = 0
-
         self.lcd.Show("Demarrage...")
         time.sleep(3)
 
         isPlaying = True
         while isPlaying:
             
-            uuidFirstCard = AskCard()
+            uuidFirstCard = self.__AskCard()
             
             time.sleep(1)
             
-            uuidSecondCard = AskCard()
+            uuidSecondCard = self.__AskCard()
             
             time.sleep(1)
 
-            CheckPair(uuidFirstCard, uuidSecondCard)
+            self.__CheckPair(uuidFirstCard, uuidSecondCard)
                     
             time.sleep(2)
             
-            if(nbOfPair == nbOfPairPlayerFound):
+            if(self.nbOfPair == self.nbOfPairPlayerFound):
                 isPlaying = False
                 
         self.lcd.Show("Victoire!")
+        time.sleep(3)

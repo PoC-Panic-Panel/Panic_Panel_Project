@@ -1,15 +1,8 @@
+import random
+
 class CardVerifier:
     def __init__(self):
-        self.cardsNotFound = {
-            "202186105173" : "jaune",
-            "42766173" : "rouge",
-            "17037184174" : "bleu",
-            "5810543166" : "vert",
-            "104621165" : "jaune",
-            "10624095174" : "rouge",
-            "122152174" : "bleu",
-            "23480172174" : "vert",
-        }
+        self.cardsNotFound = self.__AssignColorsShuffled()
         self.cardsFound = []
     
     def IsSameCard(self, uuidFirstCard, uuidSecondCard):
@@ -36,3 +29,26 @@ class CardVerifier:
     
     def GetValue(self, uuid):
         return self.cardsNotFound[uuid]
+    
+    def __AssignColorsShuffled(self):
+        uuids = ["202186105173",
+                 "42766173", 
+                 "17037184174",
+                 "5810543166", 
+                 "104621165",
+                 "10624095174",
+                 "122152174",
+                 "23480172174"
+                ]
+        colors = ["jaune", "rouge", "bleu", "vert"]
+
+        n = len(uuids)
+        k = len(colors)
+
+        color_pool = []
+        for i in range(n):
+            color_pool.append(colors[i % k])
+
+        random.shuffle(color_pool)
+
+        return {uid: color_pool[i] for i, uid in enumerate(uuids)}
