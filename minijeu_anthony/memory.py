@@ -2,10 +2,11 @@ from cardVerifier import CardVerifier
 import time
 
 class Memory:
-    def __init__(self, reader, lcd):
+    def __init__(self, reader, lcd, ledController):
         self.reader = reader
         self.verifier = CardVerifier()
         self.lcd = lcd
+        self.ledController = ledController
         self.nbOfPairPlayerFound = 0
         self.nbOfPair = 4
         
@@ -39,6 +40,7 @@ class Memory:
     def Play(self):
         self.lcd.Show("Demarrage...")
         time.sleep(3)
+        self.ledController.OnLightGreen()
 
         isPlaying = True
         while isPlaying:
