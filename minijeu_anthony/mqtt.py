@@ -122,7 +122,7 @@ class MQTTPublisher:
     def publish_state(self, session_id: str, state: str = "SUCCESS"):
         """Publie le JSON sur le topic"""
         payload = {
-            "SessionId": session_id,
+            "sessionId": session_id,
             "state": state
         }
         payload_str = json.dumps(payload)
