@@ -38,8 +38,6 @@ class Memory:
                 self.lcd.Show("Nan nan nan!")
     
     def Play(self):
-        self.lcd.Show("Demarrage...")
-        time.sleep(3)
         self.ledController.OnLightGreen()
 
         isPlaying = True
@@ -61,4 +59,3 @@ class Memory:
                 isPlaying = False
                 
         self.lcd.Show("Victoire!")
-        time.sleep(3)
