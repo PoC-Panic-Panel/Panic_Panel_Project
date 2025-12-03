@@ -1,12 +1,14 @@
 # main.py
 import time
 import uuid
+import random
 from typing import Optional
 
 
 
 from config import (
     DIFFICULTY_SETTINGS,
+    ALL_GAMES,
     PIN_BTN_EASY,
     PIN_BTN_MEDIUM,
     PIN_BTN_HARD,
@@ -28,6 +30,7 @@ class PanicServer:
         self.current_difficulty: str = "EASY"
         self.current_session: Optional[GameSession] = None
         self.current_session_id: Optional[str] = None
+        self.current_games: list[str] = []
 
         # MQTT
         self.mqtt = MqttClient(
@@ -88,56 +91,64 @@ class PanicServer:
         # Démarrage de partie
         if self.gpio.is_pressed(PIN_BTN_START):
             self.start_new_session()
-            time.sleep(0.3)  # évite plusieurs lancements si on garde le bouton appuyé
+            time.sleep(0.3)
 
     def start_new_session(self):
         settings = DIFFICULTY_SETTINGS[self.current_difficulty]
 
+        games_count = settings["games_count"]
+        pool = list(ALL_GAMES)
+        
+        if games_count > len(pool):
+            print(f"[WARN] game_count ({games_count}) > nb de mini-jeux ({len(pool)}), ajustement.")
+            games_count = len(pool)
+            
+        games_to_run = random.sample(pool, games_count)
+        self.current_games = games_to_run
+
         self.current_session = GameSession(
             difficulty=self.current_difficulty,
-            total_games=settings["games_count"],
+            total_games=games_count,
             time_limit=settings["time_limit"],
         )
         self.current_session_id = f"S-{uuid.uuid4().hex[:8]}"
 
-        # LED bleue ON pendant la partie
         self.gpio.set_start_led(True)
 
-        # Affichage initial
         self.display.show_session(self.current_session)
-
-
-        from config import DIFFICULTY_GAMES #Ne pas oublier de le virer
-        games_to_run = DIFFICULTY_GAMES[self.current_difficulty]
         
-        # Notifier les mini-jeux (s'ils écoutent ce topic)
         payload = {
             "sessionId": self.current_session_id,
             "difficulty": self.current_difficulty,
             "games": games_to_run,
-            "gamesCount": settings["games_count"],
+            "gamesCount": games_count,
             "timeLimit": settings["time_limit"],
         }
         self.mqtt.publish(TOPIC_SESSION_NEW, payload)
 
-    # ---------- Boucle principale ----------
 
     def loop(self):
         try:
             while True:
                 if self.current_session is None:
-                    # Mode attente : gestion des boutons de difficulté + start
                     self._handle_buttons_idle()
                 else:
-                    # Partie en cours : mise à jour écran et gestion fin
                     self.display.show_session(self.current_session)
 
                     if self.current_session.is_finished():
-                        # Fin de partie
+                        if self.current_session_id is not None and self.current_games:
+                            stop_payload = {
+                                "sessionId" : self.current_session_id,
+                                "cmd": "STOP",
+                                "reason": "TIMEOUT"
+                            }
+                            for game_id in self.current_games:
+                                topic = f"panic/game/{game_id}/cmd"
+                                self.mqtt.publish(topic, stop_payload)
+                                
                         self.display.show_result(self.current_session)
                         self.gpio.set_start_led(False)
 
-                        # Reset
                         self.current_session = None
                         self.current_session_id = None
                         self.display.show_idle(self.current_difficulty)

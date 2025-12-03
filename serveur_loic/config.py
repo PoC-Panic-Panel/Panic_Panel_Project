@@ -5,17 +5,25 @@ TOPIC_GAME_STATUS = "panic/game/+/status"
 
 TOPIC_SESSION_NEW = "panic/server/session"
 
+ALL_GAMES = [
+    "rfid-memory",
+    "panic-sound",
+    "chifoumi",
+    # "cadenas",
+    # "speed-simons",
+]
+
 DIFFICULTY_SETTINGS = {
-    "EASY": {"time_limit": 90, "games_count": 1},
-    "MEDIUM": {"time_limit": 60, "games_count": 3},
-    "HARD": {"time_limit": 45, "games_count": 4},
+    "EASY": {"time_limit": 120, "games_count": 2},
+    "MEDIUM": {"time_limit": 90, "games_count": 3},
+    "HARD": {"time_limit": 60, "games_count": 4},
 }
 
-DIFFICULTY_GAMES = {
-    "EASY": ["rfid_memory"],
-    "MEDIUM": ["rfid_memory"],
-    "HARD": ["rfid_memory"],
-}
+# DIFFICULTY_GAMES = {
+#     "EASY": ["rfid_memory"],
+#     "MEDIUM": ["rfid_memory"],
+#     "HARD": ["rfid_memory"],
+# }
 
 PIN_LED_BROKER = 17
 PIN_LED_SERVICE = 27
