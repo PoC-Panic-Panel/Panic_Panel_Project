@@ -73,10 +73,6 @@ class MQTTClientWrapper:
     # ------------------ MÉTHODE BLOQUANTE ------------------
 
     def wait_for_start(self, timeout=None) -> bool:
-        """
-        Bloque jusqu'à la réception du message.
-        Retourne True si reçu, False si timeout.
-        """
         print("⏳ En attente du message START…")
         received = self.start_event.wait(timeout=timeout)
         if received:
@@ -115,12 +111,10 @@ class MQTTPublisher:
 
     # ------------------ MÉTHODES ------------------
     def start(self):
-        """Connecte le client et lance la loop en arrière-plan"""
         self.client.connect(self.host, self.port, 60)
         self.client.loop_start()
 
     def publish_state(self, session_id: str, state: str = "SUCCESS"):
-        """Publie le JSON sur le topic"""
         payload = {
             "sessionId": session_id,
             "state": state
