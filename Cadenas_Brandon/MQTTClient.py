@@ -7,10 +7,10 @@ class MQTTWrapper:
         self.host = host
         self.port = port
         self.sessionID = ""
-        self.gameName = "rfid-memory"
+        self.gameName = "cadenas"
         self.topicGame = "panic/server/session"
-        self.topicTime = "panic/game/rfid-memory/cmd"
-        self.statusTopic = "panic/game/rfid-memory/status"
+        self.topicTime = "panic/game/cadenas/cmd"
+        self.statusTopic = "panic/game/cadenas/status"
 
         # MQTT client
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

@@ -97,7 +97,7 @@ def EndGame():
     GPIO.output(red_LED_PIN, GPIO.LOW)
 
 def numberValueChange():
-    while gameUnlocked == False:
+    while gameUnlocked == False and mqttWrapper.stop_event.is_set() == False:
         etat_up_button = GPIO.input(up_btn_PIN)
         etat_down_button = GPIO.input(down_btn_PIN)
         etat_confirm_button = GPIO.input(confirm_btn_PIN)
@@ -138,24 +138,27 @@ def numberValueChange():
                 lcd.write_string(" " * 16)
                 mutex.release()
             sleep(0.3)
+    sleep(0.5)
+    lcd.clear()
 
 def blinkingCurrentValue():
     global currentDigit
     try:
-        while gameUnlocked == False:
-            print("blinkingCurrentValue", currentDigit)
+        while gameUnlocked == False and mqttWrapper.stop_event.is_set() == False:
             mutex.acquire()
             lcd.cursor_pos = (0, 5 + currentDigit * 2)
             lcd.write_string(" ")
             mutex.release()
             sleep(0.5)
-            if gameUnlocked:
+            if gameUnlocked or mqttWrapper.stop_event.is_set():
                 break
             mutex.acquire()
             lcd.cursor_pos = (0, 5 + currentDigit * 2)
             lcd.write_string(str(passcode[currentDigit]))
             mutex.release()
             sleep(0.5)
+        sleep(0.5)
+        lcd.clear()
     except Exception as e:
         print("Error in blinkingCurrentValue:", e)
 
@@ -176,7 +179,7 @@ def buzzerMorseCode():
         }
         print(unlockCode)
         code = ''.join(map(str, unlockCode))
-        while gameUnlocked == False:
+        while gameUnlocked == False and mqttWrapper.stop_event.is_set() == False:
             for digit in code:
                 if gameUnlocked:
                     break
@@ -186,7 +189,7 @@ def buzzerMorseCode():
                 mutex.release()
                 morse_code = morse_code_dict[digit]
                 for symbol in morse_code:
-                    if gameUnlocked:
+                    if gameUnlocked or mqttWrapper.stop_event.is_set():
                         break
                     if symbol == '.':
                         buzzer.start(50)
@@ -200,21 +203,25 @@ def buzzerMorseCode():
                         buzzer.stop()
                         time.sleep(0.2)
                 time.sleep(1.0)
-            print("buzzerMorseCode 1")
             mutex.acquire()
             lcd.cursor_pos = (1, 0)
             lcd.write_string(" " * 16)
             mutex.release()
             time.sleep(5)
-            print("buzzerMorseCode 2")
-        print("buzzerMorseCode 3")
+        sleep(0.5)
+        lcd.clear()
     except Exception as e:
         print("Error in buzzerMorseCode:", e)
 
 def StartGame():
     try:
+        global passcode 
         global gameUnlocked
+        global currentDigit
+
+        passcode = [0,0,0,0]
         gameUnlocked = False
+        currentDigit = 0
         GenerateUnlockCode()
         GPIO.output(green_LED_PIN, GPIO.LOW)
         GPIO.output(red_LED_PIN, GPIO.HIGH)
@@ -224,19 +231,15 @@ def StartGame():
         thread_numberValueChange = threading.Thread(target=numberValueChange)
         thread_blinkingCurrentValue = threading.Thread(target=blinkingCurrentValue)
         thread_buzzerMorseCode = threading.Thread(target=buzzerMorseCode)
-        #numberValueChange()
 
         thread_numberValueChange.start()
         thread_blinkingCurrentValue.start()
         thread_buzzerMorseCode.start()
         thread_numberValueChange.join()
-        print("JOIN 1")
         thread_blinkingCurrentValue.join()
-        print("JOIN 2")
         thread_buzzerMorseCode.join()
 
-    except KeyboardInterrupt:
-        
+    except KeyboardInterrupt:   
         thread_blinkingCurrentValue.running = False
         thread_numberValueChange.running = False
         thread_buzzerMorseCode.running = False
@@ -246,9 +249,12 @@ def StartGame():
     except Exception as e:
         print("An error occurred:", e)
 
-while True:
-    #mqttWapper = MQTTWrapper()
-    #mqttWapper.start()
-    #mqttWapper.wait_for_start()
-    StartGame()
-    #mqttWapper.publish_state("SUCCESS")
+try:         
+    while True:
+        mqttWrapper = MQTTWrapper()
+        mqttWrapper.start()
+        mqttWrapper.wait_for_start()
+        StartGame()
+        mqttWrapper.publish_state("SUCCESS")
+except Exception as e:
+        print(f"Erreur dans la boucle principale : {e}")
