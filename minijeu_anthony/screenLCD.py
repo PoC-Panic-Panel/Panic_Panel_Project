@@ -3,7 +3,7 @@ class ScreenLCD:
     def __init__(self):
         self.lcd = CharLCD("PCF8574", 0x27, port=1, cols=16, rows=2)
         
-    def Show(self,text):
+    def show(self,text):
         self.lcd.clear()
         self.lcd.write_string(text)
         

@@ -8,14 +8,10 @@ class LedController:
     def __init__(self):
         pass
     
-    def OnLightRed(self):
+    def light_red_on(self):
         GPIO.output(11, GPIO.LOW)
         GPIO.output(13, GPIO.HIGH)
         
-    def OnLightGreen(self):
+    def light_green_on(self):
         GPIO.output(13, GPIO.LOW)
         GPIO.output(11, GPIO.HIGH)
-        
-led = LedController()
-
-led.OnLightRed()

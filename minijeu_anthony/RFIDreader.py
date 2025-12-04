@@ -5,7 +5,7 @@ class RFIDReader:
         self.rdr = RFID()
         self.util = self.rdr.util()
     
-    def Read(self):
+    def read(self):
         self.rdr.wait_for_tag()
         
         (error, data) = self.rdr.request()

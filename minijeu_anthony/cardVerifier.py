@@ -2,35 +2,35 @@ import random
 
 class CardVerifier:
     def __init__(self):
-        self.cardsNotFound = self.__AssignColorsShuffled()
-        self.cardsFound = []
+        self.cards_not_found = self.__assign_colors_shuffled()
+        self.cards_found = []
     
-    def IsSameCard(self, uuidFirstCard, uuidSecondCard):
-        if(uuidFirstCard == uuidSecondCard):
+    def is_same_card(self, uuid_first_card, uuid_second_card):
+        if(uuid_first_card == uuid_second_card):
             return True
         return False
     
-    def IsAPair(self, uuidFirstCard, uuidSecondCard):        
-        if(self.cardsNotFound[uuidFirstCard] == self.cardsNotFound[uuidSecondCard]):
-            self.cardsFound.append(uuidFirstCard)
-            self.cardsFound.append(uuidSecondCard)
+    def is_a_pair(self, uuid_first_card, uuid_second_card):        
+        if(self.cards_not_found[uuid_first_card] == self.cards_not_found[uuid_second_card]):
+            self.cards_found.append(uuid_first_card)
+            self.cards_found.append(uuid_second_card)
             return True
         return False
         
-    def IsACardInTheGame(self, noCard):
-        if(noCard in self.cardsNotFound):
+    def is_a_card_in_the_game(self, noCard):
+        if(noCard in self.cards_not_found):
             return True
         return False
     
-    def IsAPairFound(self, uuidFirstCard, uuidSecondCard):
-        if(uuidFirstCard in self.cardsFound and uuidSecondCard in self.cardsFound):
+    def is_a_pair_found(self, uuid_first_card, uuid_second_card):
+        if(uuid_first_card in self.cards_found and uuid_second_card in self.cards_found):
             return True
         return False
     
-    def GetValue(self, uuid):
-        return self.cardsNotFound[uuid]
+    def get_value(self, uuid):
+        return self.cards_not_found[uuid]
     
-    def __AssignColorsShuffled(self):
+    def __assign_colors_shuffled(self):
         uuids = ["202186105173",
                  "42766173", 
                  "17037184174",
@@ -40,7 +40,7 @@ class CardVerifier:
                  "122152174",
                  "23480172174"
                 ]
-        colors = ["jaune", "rouge", "bleu", "vert"]
+        colors = ["Jaune", "Rouge", "Bleu", "Vert"]
 
         n = len(uuids)
         k = len(colors)
