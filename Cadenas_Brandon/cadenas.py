@@ -253,6 +253,8 @@ try:
         GPIO.output(red_LED_PIN, GPIO.HIGH)
         mqttWrapper = MQTTWrapper()
         mqttWrapper.start()
+        lcd.clear()
+        lcd.write_string("Waiting for the game to start...")
         mqttWrapper.wait_for_start()
         gameUnlocked = False
         StartGame()
