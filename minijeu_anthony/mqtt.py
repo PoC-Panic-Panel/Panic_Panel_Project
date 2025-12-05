@@ -44,7 +44,6 @@ class MQTTWrapper:
             text = message.payload.decode("utf-8")
             
             if message.topic == self.topicGame:
-                print(message.topic)
                 self.verify_game_start(text)
                 
             if message.topic == self.topicTime:

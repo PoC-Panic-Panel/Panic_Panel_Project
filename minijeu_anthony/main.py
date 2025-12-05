@@ -11,6 +11,8 @@ led_controller = LedController()
 mqtt = MQTTWrapper()
 
 def start_game():
+    mqtt.start_event.clear()
+    mqtt.stop_event.clear()                                                    
     memory = Memory(reader, lcd, led_controller, mqtt)
     memory.play()   
 

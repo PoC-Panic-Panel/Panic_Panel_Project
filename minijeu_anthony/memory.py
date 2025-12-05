@@ -42,7 +42,7 @@ class Memory:
                 
     def is_finised(self):
         if self.mqtt.stop_event.is_set():
-            self.lcd.show("Partie stoppée")
+            self.lcd.show("Partie fini")
             return True
         return False
     
