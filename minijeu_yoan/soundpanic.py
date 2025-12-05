@@ -65,7 +65,7 @@ class SoundPanic:
         self.led.set_red(True)
         self.led.set_green(False)
         
-        self.mqtt.wait_for_start()
+        #self.mqtt.wait_for_start()
         self.led.set_red(False)
         self.led.set_green(True)
         
