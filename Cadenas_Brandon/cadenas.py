@@ -249,12 +249,28 @@ def StartGame():
     except Exception as e:
         print("An error occurred:", e)
 
+def BlinkGreenLED():
+    GPIO.output(green_LED_PIN, GPIO.HIGH)
+    time.sleep(0.5)
+    GPIO.output(green_LED_PIN, GPIO.LOW)
+    time.sleep(0.5)
+
 try:         
+    GPIO.output(green_LED_PIN, GPIO.LOW)
+    GPIO.output(red_LED_PIN, GPIO.HIGH)
     while True:
         mqttWrapper = MQTTWrapper()
         mqttWrapper.start()
         mqttWrapper.wait_for_start()
+        GPIO.output(red_LED_PIN, GPIO.LOW)
+        GPIO.output(green_LED_PIN, GPIO.HIGH)
+        gameUnlocked = False
         StartGame()
-        mqttWrapper.publish_state("SUCCESS")
+        if gameUnlocked:
+            mqttWrapper.publish_state("SUCCESS")
+            while not mqttWrapper.stop_event.is_set():
+                BlinkGreenLED()
+        else:
+            mqttWrapper.publish_state("FAILURE")
 except Exception as e:
         print(f"Erreur dans la boucle principale : {e}")
