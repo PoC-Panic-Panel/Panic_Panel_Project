@@ -3,6 +3,11 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 
 
+import time
+from dataclasses import dataclass, field
+from enum import Enum, auto
+
+
 class SessionState(Enum):
     IDLE = auto()
     RUNNING = auto()
@@ -33,18 +38,27 @@ class GameSession:
         if self.remaining_time() <= 0:
             self._compute_final_state()
             return True
+            
+        if self.completed_games + self.failed_games >= self.total_games:
+            self._compute_final_state()
+            return True
         
         return False
     
     def _compute_final_state(self):
-        if self.completed_games >= self.total_games and self.failed_games ==0:
+        if self.completed_games == self.total_games and self.failed_games == 0:
             self.state = SessionState.WIN
         else:
             self.state = SessionState.LOSE
             
     def register_game_result(self, success: bool):
+        if self.state != SessionState.RUNNING:
+            return
+
         if success:
             self.completed_games += 1
         else:
-            self.failed_game +=1
+            self.failed_games +=1
             
+        if self.completed_games + self.failed_games >= self.total_games:
+             self._compute_final_state()

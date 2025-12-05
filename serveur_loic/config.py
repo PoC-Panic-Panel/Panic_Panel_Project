@@ -9,8 +9,8 @@ ALL_GAMES = [
     "rfid-memory",
     "panic-sound",
     "chifoumi",
-    # "cadenas",
-    # "speed-simons",
+    "cadenas",
+    "button-flash",
 ]
 
 DIFFICULTY_SETTINGS = {
@@ -38,3 +38,4 @@ PIN_BTN_EASY = 5
 PIN_BTN_MEDIUM = 6
 PIN_BTN_HARD = 13
 PIN_BTN_START = 19
+PIN_BTN_STOP = 26
